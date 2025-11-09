@@ -1,149 +1,137 @@
-// Simple countdown script
-(function () {
-  const el = document.getElementById('countdown');
-  const daysEl = document.getElementById('days');
-  const hoursEl = document.getElementById('hours');
-  const minutesEl = document.getElementById('minutes');
-  const secondsEl = document.getElementById('seconds');
-  const doneEl = document.getElementById('done');
-  const subtitle = document.getElementById('subtitle');
+:root{
+  --bg1: #ff9a9e;
+  --bg2: #fad0c4;
+  --card: rgba(255,255,255,0.9);
+  --accent: #ff3b6b;
+  --muted: #6b6b6b;
+  --glass: rgba(255,255,255,0.6);
+  --radius: 14px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
 
-  // Read date from URL ?date=YYYY-MM-DDTHH:MM or from data-target attribute
-  const params = new URLSearchParams(location.search);
-  const urlDate = params.get('date');
-  const dataDate = el.dataset.target;
-  const target = parseDate(urlDate || dataDate);
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#222;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:24px;
+}
 
-  if (!target || isNaN(target.getTime())) {
-    subtitle.textContent = 'Invalid or missing date — edit index.html data-target or add ?date=YYYY-MM-DDTHH:MM';
-    return;
-  }
+.page{
+  width:100%;
+  max-width:760px;
+}
 
-  // show friendly target
-  subtitle.textContent = `Target: ${target.toLocaleString()}`;
+.hero{
+  text-align:center;
+  margin-bottom:18px;
+  color:#3b3b3b;
+}
 
-  function update() {
-    const now = new Date();
-    const diff = target - now;
+.hero h1{
+  margin:0;
+  font-size:clamp(20px,4vw,36px);
+  letter-spacing:0.2px;
+}
 
-    if (diff <= 0) {
-      daysEl.textContent = '00';
-      hoursEl.textContent = '00';
-      minutesEl.textContent = '00';
-      secondsEl.textContent = '00';
-      finish();
-      return clearInterval(timer);
-    }
+.subtitle{
+  margin:6px 0 0 0;
+  font-size:14px;
+  color:var(--muted);
+}
 
-    const s = Math.floor(diff / 1000);
-    const days = Math.floor(s / (3600 * 24));
-    const hours = Math.floor((s % (3600 * 24)) / 3600);
-    const minutes = Math.floor((s % 3600) / 60);
-    const seconds = s % 60;
+.card{
+  background:linear-gradient(180deg,var(--card),var(--glass));
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.12);
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  align-items:center;
+}
 
-    daysEl.textContent = pad(days);
-    hoursEl.textContent = pad(hours);
-    minutesEl.textContent = pad(minutes);
-    secondsEl.textContent = pad(seconds);
-  }
+/* face styles */
+.face-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:6px;
+}
+/* make mouth updates smooth by transition of transform on the eyes group */
+#eyes { transform-origin: 50% 50%; transition: transform 300ms ease; }
 
-  const timer = setInterval(update, 1000);
-  update();
+/* countdown layout */
+#countdown{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
 
-  // Buttons
-  document.getElementById('editBtn').addEventListener('click', () => {
-    const input = prompt('Enter a date/time (YYYY-MM-DDTHH:MM) or just YYYY-MM-DD');
-    if (!input) return;
-    const d = parseDate(input);
-    if (!d || isNaN(d.getTime())) return alert('Invalid date format.');
-    // Update URL so it can be shared and update live display
-    const u = new URL(location);
-    u.searchParams.set('date', input);
-    history.replaceState(null, '', u);
-    location.reload();
-  });
+.time{
+  background:rgba(255,255,255,0.95);
+  padding:14px 18px;
+  border-radius:10px;
+  min-width:92px;
+  text-align:center;
+  box-shadow:0 6px 16px rgba(0,0,0,0.06);
+}
 
-  document.getElementById('shareBtn').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(location.href);
-      alert('Link copied! Share it with your loved one ❤️');
-    } catch {
-      prompt('Copy this link', location.href);
-    }
-  });
+.time span{
+  display:block;
+  font-size:28px;
+  font-weight:700;
+  color:var(--accent);
+}
 
-  function finish() {
-    doneEl.classList.remove('hidden');
-    confettiBurst();
-  }
+.time small{
+  display:block;
+  margin-top:6px;
+  font-size:12px;
+  color:var(--muted);
+}
 
-  // Helpers
-  function pad(n) {
-    return String(n).padStart(2, '0');
-  }
+/* controls */
+.controls{display:flex;gap:10px}
+button{
+  background:transparent;
+  border:2px solid var(--accent);
+  color:var(--accent);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+button:hover{background:var(--accent);color:white;}
 
-  function parseDate(s) {
-    if (!s) return null;
-    // Accept YYYY-MM-DD or YYYY-MM-DDTHH:MM[:SS]
-    // If time omitted, set to 20:00 local time by default (evening)
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-      return new Date(s + 'T20:00:00');
-    }
-    try {
-      return new Date(s);
-    } catch {
-      return null;
-    }
-  }
+/* done */
+.hidden{display:none}
+.done{text-align:center}
+.done h2{margin:6px 0 0 0;color:var(--accent)}
 
-  // Minimal confetti: create lots of small colored divs and animate with requestAnimationFrame
-  function confettiBurst() {
-    const colors = ['#ff6b6b', '#ffd93d', '#6ee7b7', '#66b3ff', '#c18cff', '#ff9fb1'];
-    const root = document.getElementById('confetti-root');
-    const count = 80;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+/* confetti pieces */
+.confetti{
+  position:fixed;
+  width:10px;
+  height:10px;
+  pointer-events:none;
+  z-index:9999;
+  will-change:transform,opacity;
+  opacity:0.95;
+  border-radius:2px;
+}
 
-    for (let i = 0; i < count; i++) {
-      const node = document.createElement('div');
-      node.className = 'confetti';
-      node.style.background = colors[Math.floor(Math.random() * colors.length)];
-      node.style.left = Math.random() * w + 'px';
-      node.style.top = '-10px';
-      node.style.width = 6 + Math.random() * 12 + 'px';
-      node.style.height = 6 + Math.random() * 12 + 'px';
-      const rot = Math.random() * 360;
-      node.style.transform = `translateY(0) rotate(${rot}deg)`;
-      root.appendChild(node);
-
-      // animation parameters
-      const duration = 2500 + Math.random() * 2000;
-      const sway = 80 + Math.random() * 120;
-      const rotateSpeed = (Math.random() * 6 - 3);
-      const startLeft = parseFloat(node.style.left);
-      const horizontalDir = Math.random() < 0.5 ? -1 : 1;
-      const startTime = performance.now() + Math.random() * 300;
-
-      (function animateConfetti(elm, startTime) {
-        function step(now) {
-          const t = Math.min(1, (now - startTime) / duration);
-          if (t < 0) {
-            requestAnimationFrame(step);
-            return;
-          }
-          // vertical fall (ease)
-          const y = easeOutQuad(t) * (h + 200);
-          const x = startLeft + Math.sin(t * Math.PI * 2 * (1 + Math.random())) * sway * horizontalDir;
-          const r = rot + rotateSpeed * t * 200;
-          elm.style.transform = `translate(${x - startLeft}px, ${y}px) rotate(${r}deg)`;
-          elm.style.opacity = String(1 - t);
-          if (t < 1) requestAnimationFrame(step);
-          else elm.remove();
-        }
-        requestAnimationFrame(step);
-      })(node, startTime);
-    }
-
-    function easeOutQuad(t) { return t * (2 - t); }
-  }
-})();
+/* responsive */
+@media (max-width:420px){
+  .time{min-width:68px;padding:10px}
+  .time span{font-size:20px}
+  #smiley { width:110px; height:110px; }
+}

@@ -58,17 +58,6 @@ body{
   align-items:center;
 }
 
-/* face styles */
-.face-wrap{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:6px;
-}
-/* make mouth updates smooth by transition of transform on the eyes group */
-#eyes { transform-origin: 50% 50%; transition: transform 300ms ease; }
-
-/* countdown layout */
 #countdown{
   display:flex;
   gap:12px;
@@ -133,5 +122,4 @@ button:hover{background:var(--accent);color:white;}
 @media (max-width:420px){
   .time{min-width:68px;padding:10px}
   .time span{font-size:20px}
-  #smiley { width:110px; height:110px; }
 }

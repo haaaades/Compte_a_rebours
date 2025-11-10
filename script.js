@@ -1,4 +1,4 @@
-// Simple countdown script with smiley progress
+// Simple countdown script
 (function () {
   const el = document.getElementById('countdown');
   const daysEl = document.getElementById('days');
@@ -7,12 +7,6 @@
   const secondsEl = document.getElementById('seconds');
   const doneEl = document.getElementById('done');
   const subtitle = document.getElementById('subtitle');
-
-  // smile elements
-  const mouth = document.getElementById('mouth');
-  const eyesGroup = document.getElementById('eyes');
-  const leftEye = document.getElementById('eye-left');
-  const rightEye = document.getElementById('eye-right');
 
   // Read date from URL ?date=YYYY-MM-DDTHH:MM or from data-target attribute
   const params = new URLSearchParams(location.search);
@@ -28,9 +22,6 @@
   // show friendly target
   subtitle.textContent = `Target: ${target.toLocaleString()}`;
 
-  // set starting point for progress as "now" so at page load progress = 0%
-  const start = new Date();
-
   function update() {
     const now = new Date();
     const diff = target - now;
@@ -41,10 +32,7 @@
       minutesEl.textContent = '00';
       secondsEl.textContent = '00';
       finish();
-      clearInterval(timer);
-      // set full smile
-      setFaceProgress(1);
-      return;
+      return clearInterval(timer);
     }
 
     const s = Math.floor(diff / 1000);
@@ -57,16 +45,6 @@
     hoursEl.textContent = pad(hours);
     minutesEl.textContent = pad(minutes);
     secondsEl.textContent = pad(seconds);
-
-    // compute progress from start -> target as number in [0..1]
-    const total = target - start;
-    const elapsed = now - start;
-    let progress = 0;
-    if (total > 0) progress = Math.max(0, Math.min(1, elapsed / total));
-    // If you'd prefer a progress that considers how far along we are from now to target:
-    // let progress = 1 - (diff / (target - start)); // equivalent
-
-    setFaceProgress(progress);
   }
 
   const timer = setInterval(update, 1000);
@@ -117,32 +95,6 @@
       return null;
     }
   }
-
-  // Face control:
-  // We modify the quadratic bezier control point (cx,cy) of the mouth path M30 64 Q cx cy 70 64
-  // when progress=0 -> frown, progress=0.5 -> neutral, progress=1 -> big smile.
-  function setFaceProgress(p) {
-    // p in [0..1]
-    // mouth endpoints fixed at (30,64) and (70,64)
-    // control point x = 50 (center), control point y moves from frownY -> smileY
-    const frownY = 86;  // down => big frown
-    const neutralY = 74; // slightly down or neutral
-    const smileY = 56;  // up => smile
-    // to have smoother transition: map p 0..1 to controlY with easing
-    // We'll treat middle as neutral, but keep continuous:
-    const controlY = lerp(frownY, smileY, easeInOutQuad(p));
-    const cx = 50;
-    // update mouth path
-    const d = `M30 64 Q ${cx} ${controlY} 70 64`;
-    mouth.setAttribute('d', d);
-
-    // eyes: make them slightly squint as smile grows: scaleY reduces a bit
-    const eyeSquint = 1 - 0.25 * easeInOutQuad(p); // at p=1, eyes scaleY=0.75
-    eyesGroup.style.transform = `scale(1, ${eyeSquint})`;
-  }
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function easeInOutQuad(t) { return t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t; }
 
   // Minimal confetti: create lots of small colored divs and animate with requestAnimationFrame
   function confettiBurst() {

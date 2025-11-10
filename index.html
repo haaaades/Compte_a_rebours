@@ -3,39 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Countdown for Us ❤️</title>
+  <title>On se voit bientôt !!!</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="page">
     <header class="hero">
-      <h1>Countdown to Our Date ❤️</h1>
+      <h1>❤️ Dans tes bras dans :</h1>
       <p class="subtitle" id="subtitle">Change the target date in the HTML or via the URL parameter <code>?date=YYYY-MM-DDTHH:MM</code></p>
     </header>
 
     <section class="card">
-      <!-- FACE: shows expression based on countdown progress -->
-      <div class="face-wrap" aria-hidden="true">
-        <svg id="smiley" viewBox="0 0 100 100" width="140" height="140" role="img" aria-label="Smiley face">
-          <circle cx="50" cy="50" r="45" fill="#fff6e9" stroke="#ffd9b3" stroke-width="2"/>
-          <!-- eyes -->
-          <g id="eyes" fill="#333" transform="translate(0,0)">
-            <ellipse id="eye-left" cx="34" cy="42" rx="5.5" ry="6.5"></ellipse>
-            <ellipse id="eye-right" cx="66" cy="42" rx="5.5" ry="6.5"></ellipse>
-          </g>
-          <!-- mouth: quadratic bezier (M x1 y1 Q cx cy x2 y2) -->
-          <path id="mouth" d="M30 64 Q50 76 70 64" stroke="#333" stroke-width="3" fill="transparent" stroke-linecap="round"/>
-        </svg>
-      </div>
-
-      <div id="countdown" data-target="2026-02-14T20:00:00">
+      <div id="countdown" data-target="2025-12-16T21:00:00">
         <div class="time">
           <span id="days">00</span>
-          <small>Days</small>
+          <small>Jours</small>
         </div>
         <div class="time">
           <span id="hours">00</span>
-          <small>Hours</small>
+          <small>Heures</small>
         </div>
         <div class="time">
           <span id="minutes">00</span>
@@ -43,18 +29,13 @@
         </div>
         <div class="time">
           <span id="seconds">00</span>
-          <small>Seconds</small>
+          <small>Secondes</small>
         </div>
       </div>
 
-      <div class="controls">
-        <button id="editBtn">Set date</button>
-        <button id="shareBtn">Share link</button>
-      </div>
-
       <div id="done" class="done hidden">
-        <h2>We're together! 🎉</h2>
-        <p>Happy day ❤️</p>
+        <h2>Arrivée d'Enio IMINENTE !! 🎉</h2>
+        <p>Je suis dans l'avion bébé je brûle d'impatience ❤️</p>
       </div>
     </section>
   </main>
